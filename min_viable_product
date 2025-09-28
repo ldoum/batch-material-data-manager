@@ -1,0 +1,60 @@
+import bpy
+
+
+def set_material_to_obj(item, material_name, action):
+  
+    match action:
+            
+        case "add":  
+           
+            #look the material slot up in the material collection
+            if material_name in bpy.data.materials:
+                mat = bpy.data.materials[material_name] #already exists
+                item.data.materials.append(mat) #add the material to obj
+            else:
+                mat = bpy.data.materials.new(name=material_name) #doesn't exist yet.
+                item.data.materials.append(mat)
+                        
+        case "replace": 
+                
+            target = "Giro_blue" #old
+                
+            #check if material exists first
+            if material_name in bpy.data.materials:
+                mat = bpy.data.materials[material_name] #already exists
+            else:
+                mat = bpy.data.materials.new(name=material_name) #doesn't exist yet.
+                
+            #find name of item in obj to replace
+            for i in range(len(item.data.materials)):
+                if item.data.materials[i].name == target:
+                    item.data.materials[i] = mat
+
+        case "delete":
+            
+            #find name of item to replace
+            for i in range(len(item.data.materials)):
+                if item.data.materials[i].name == material_name:
+                    item.data.materials.pop(index=i)
+                    break
+            
+        case "flush":   
+            item.data.materials.clear()
+             
+        case _:
+            pass
+    
+  
+def select_option():
+    
+    for every in bpy.context.selected_objects:
+        
+        if every.type == 'MESH':
+            
+            new_mats = ["Giro_rouge", "Giro_blue"]
+        
+            for m in new_mats:
+                set_material_to_obj(every, m, "delete")
+        
+        
+select_option()
