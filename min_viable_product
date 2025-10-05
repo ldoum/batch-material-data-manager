@@ -26,15 +26,15 @@ def set_material_to_obj(item, material_name, action):
                 mat = bpy.data.materials.new(name=material_name) #doesn't exist yet.
                 
             #find name of item in obj to replace
-            for i in range(len(item.data.materials)):
-                if item.data.materials[i].name == target:
+            for i, temp_slot in enumerate(item.data.materials):
+                if temp_slot.name == target:
                     item.data.materials[i] = mat
 
         case "delete":
             
-            #find name of item to replace
-            for i in range(len(item.data.materials)):
-                if item.data.materials[i].name == material_name:
+            #find name of item to erase
+            for i, del_slot in enumerate(item.data.materials):
+                if del_slot.name == material_name:
                     item.data.materials.pop(index=i)
                     break
             
