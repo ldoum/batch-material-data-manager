@@ -36,7 +36,6 @@ def set_material_to_obj(item, material_name, action):
             for i, del_slot in enumerate(item.data.materials):
                 if del_slot.name == material_name:
                     item.data.materials.pop(index=i)
-                    break
             
         case "flush":   
             item.data.materials.clear()
