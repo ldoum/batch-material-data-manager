@@ -4,40 +4,36 @@ import bpy
 def set_material_to_obj(item, material_name, action):
   
     match action:
-            
-        case "add":  
+        
+        #add    
+        case 1:  
            
             #look the material slot up in the material collection
             if material_name in bpy.data.materials:
                 mat = bpy.data.materials[material_name] #already exists
-                item.data.materials.append(mat) #add the material to obj
-            else:
-                mat = bpy.data.materials.new(name=material_name) #doesn't exist yet.
-                item.data.materials.append(mat)
-                        
-        case "replace": 
+           
+        # replace                
+        case 2: 
                 
             target = "Giro_blue" #old
                 
             #check if material exists first
             if material_name in bpy.data.materials:
                 mat = bpy.data.materials[material_name] #already exists
-            else:
-                mat = bpy.data.materials.new(name=material_name) #doesn't exist yet.
-                
+            
             #find name of item in obj to replace
             for i, temp_slot in enumerate(item.data.materials):
                 if temp_slot.name == target:
                     item.data.materials[i] = mat
-
-        case "delete":
+        # delete
+        case 3:
             
             #find name of item to erase
             for i, del_slot in enumerate(item.data.materials):
                 if del_slot.name == material_name:
                     item.data.materials.pop(index=i)
-            
-        case "flush":   
+        #flush    
+        case 4:   
             item.data.materials.clear()
              
         case _:
@@ -50,10 +46,10 @@ def select_option():
         
         if every.type == 'MESH':
             
-            new_mats = ["Giro_rouge", "Giro_blue"]
+            new_mats = ["Fizz"]
         
             for m in new_mats:
-                set_material_to_obj(every, m, "delete")
+                set_material_to_obj(every, m, 1)
         
         
 select_option()
