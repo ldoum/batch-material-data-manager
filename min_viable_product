@@ -11,7 +11,7 @@ def set_material_to_obj(item, material_name, action):
             #look the material slot up in the material collection
             if material_name in bpy.data.materials:
                 mat = bpy.data.materials[material_name] #already exists
-           
+                item.data.materials.append(mat)
         # replace                
         case 2: 
                 
