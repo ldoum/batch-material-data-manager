@@ -11,29 +11,17 @@ def set_material_to_obj(item, material_name, action):
             #look the material slot up in the material collection
             if material_name in bpy.data.materials:
                 mat = bpy.data.materials[material_name] #already exists
-                item.data.materials.append(mat)
-        # replace                
-        case 2: 
-                
-            target = "Giro_blue" #old
-                
-            #check if material exists first
-            if material_name in bpy.data.materials:
-                mat = bpy.data.materials[material_name] #already exists
-            
-            #find name of item in obj to replace
-            for i, temp_slot in enumerate(item.data.materials):
-                if temp_slot.name == target:
-                    item.data.materials[i] = mat
+                item.data.materials.append(mat) #add the material to obj
+        
         # delete
-        case 3:
+        case 2:
             
             #find name of item to erase
             for i, del_slot in enumerate(item.data.materials):
                 if del_slot.name == material_name:
                     item.data.materials.pop(index=i)
         #flush    
-        case 4:   
+        case 3:   
             item.data.materials.clear()
              
         case _:
