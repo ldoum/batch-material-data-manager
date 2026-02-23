@@ -7,19 +7,23 @@ def set_material_to_obj(item, material_name, action):
         
         #add    
         case 1:  
+            mat = bpy.data.materials[material_name] #already exists
            
-            #look the material slot up in the material collection
-            if material_name in bpy.data.materials:
-                mat = bpy.data.materials[material_name] #already exists
+            #look the material slot up in the material collection for obj
+            if material_name in item.data.materials:
+                pass
+            else:    
                 item.data.materials.append(mat) #add the material to obj
         
         # delete
         case 2:
             
             #find name of item to erase
-            for i, del_slot in enumerate(item.data.materials):
-                if del_slot.name == material_name:
-                    item.data.materials.pop(index=i)
+               
+            for idx in reversed(range(len(item.data.materials))):
+                if item.data.materials[idx].name == material_name:
+                    item.data.materials.pop(index=idx)
+            
         #flush    
         case 3:   
             item.data.materials.clear()
@@ -34,7 +38,7 @@ def select_option():
         
         if every.type == 'MESH':
             
-            new_mats = ["Fizz"]
+            new_mats = ["X","Fizz"]
         
             for m in new_mats:
                 set_material_to_obj(every, m, 1)
