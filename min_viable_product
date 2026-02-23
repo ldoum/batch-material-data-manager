@@ -18,11 +18,9 @@ def set_material_to_obj(item, material_name, action):
         # delete
         case 2:
             
-            #find name of item to erase
-               
-            for idx in reversed(range(len(item.data.materials))):
-                if item.data.materials[idx].name == material_name:
-                    item.data.materials.pop(index=idx)
+            #make a shallow copy of the material list. Exclude unwanted slots and their copies
+                  
+            item.data.materials[:] = [ m for m in item.data.materials if m.name != material_name]
             
         #flush    
         case 3:   
