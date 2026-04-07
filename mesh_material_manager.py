@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Material Manager",
     "author": "Lancine Doumbia",
-    "version": (0, 1, 4),
+    "version": (1, 0, 0),
     "blender": (2, 8, 0),
     "location": "View3D > Sidebar",
     "description": "A tool to manage materials on selected objects",
