@@ -190,9 +190,8 @@ class MYADDON_OT_apply_materials(bpy.types.Operator):
 
     def execute(self, context):
         mat_block = context.scene.mat_block
-        mat_ops = mat_block.material_options
         
-        #edit
+        mat_ops = mat_block.material_options
         new_mats = mat_block.material_list
         trash = mat_block.material_flush
 
