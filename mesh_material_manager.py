@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Material Manager",
     "author": "Lancine Doumbia",
-    "version": (1, 1, 1),
+    "version": (2, 0, 0),
     "blender": (2, 8, 0),
     "location": "View3D > Sidebar",
     "description": "A tool to manage materials on selected objects",
@@ -13,7 +13,7 @@ bl_info = {
 
 import bpy
 
-
+############################# CORE ################################
 def set_material_to_obj(item, material_name, action):
   
     match action:
@@ -34,32 +34,44 @@ def set_material_to_obj(item, material_name, action):
                     item.data.materials.pop(index=idx)
        
 
-##########################################################################
-
-
-#duplicate entry guard. helps method list_of_materials       
-def material_entry_is_found(collection, find_mat_by_name):
-   
-    # return true if material name is found in the collection list
-    return any(item.material_name == find_mat_by_name for item in collection)                
+             
     
+##########################     PROPS  HELPERS    ######################################
+
+    
+#case insensitive search guard. helps method list_of_materials
+def search_is_valid(mat, search):
+    
+    return (
+        mat.name.startswith(search.lower()) or 
+        mat.name.startswith(search.upper()) or 
+        mat.name.startswith(search)
+        )
+
 
 ### generate items for dynamic dropdowns
 def list_of_materials(self, context):
-
+    
+    search = context.scene.mat_block.search
+    queue = []
+    
     # if local items list is empty, add a default entry to prevent errors
     if bpy.data.materials: 
+        queue = [(mat.name, mat.name, "") for mat in bpy.data.materials if search_is_valid(mat, search)]
         
+        if queue:
+            return queue
+        else:
         # fill the list
-        return [(mat.name, mat.name, "") for mat in bpy.data.materials ]
+            return [("NOTHING", "Items not found", "")]
     
-    return [("NOTHING", "No items here", "")]
+    return [("EMPTY", "No items here", "")]
 
    
 def add_the_material_to_list(self, context):    
     bpy.ops.myaddon.dropdown_add_material(option=self.material_dropdown) #call operator to add material to list collection
        
-#################################################        
+#############################        PROPERTIES        #####################################
 
 
 
@@ -87,8 +99,12 @@ class MYADDON_PG_LookupMaterials(bpy.types.PropertyGroup):
         ],
         default='1'
     )
-    
-#################################################
+    search: bpy.props.StringProperty(
+        name="Search",
+        description="Search for a material",
+        default=""
+    )
+#############################   LIST ENTRY    ##############################
 
 class MYADDON_UL_Material_History(bpy.types.UIList):
 #UIList to show search history
@@ -104,7 +120,19 @@ class MYADDON_UL_Material_History(bpy.types.UIList):
             layout.alignment = 'CENTER'
             layout.label(text=item.material_name)
 
-################################################
+
+################################  OP HELPERS   ###################################
+
+
+#duplicate entry guard. helps method list_of_materials       
+def material_entry_is_found(collection, find_mat_by_name):
+   
+    # return true if material name is found in the collection list
+    return any(item.material_name == find_mat_by_name for item in collection)   
+
+
+##############################  OPERATORS  ###################################
+
 
 #add existing material to list via dropdown menu
 class MYADDON_OT_dropdown_add_material(bpy.types.Operator):
@@ -185,7 +213,7 @@ class MYADDON_OT_clear_material_list(bpy.types.Operator):
 
 
 
-################################################
+#############################     MAIN OPERATOR   ###############################
 
 class MYADDON_OT_apply_materials(bpy.types.Operator):
     bl_idname = "myaddon.apply_materials"
@@ -231,6 +259,7 @@ class MYADDON_OT_apply_materials(bpy.types.Operator):
             
         return {"FINISHED"}
 
+##############################     PANEL   ###############################
 
 class MYADDON_PT_material_panel(bpy.types.Panel):
     bl_idname = "MYADDON_PT_material_panel"
@@ -248,6 +277,7 @@ class MYADDON_PT_material_panel(bpy.types.Panel):
         if mat_block.material_flush:
             layout.label(text="Are you sure?")   
         else:
+            layout.prop(mat_block, "search", text="Search Material")
             layout.prop(mat_block, "material_dropdown", text="Add Material")
             layout.operator(MYADDON_OT_remove_material_from_list.bl_idname, text="Remove Material from List")
             layout.operator(MYADDON_OT_clear_material_list.bl_idname, text="Clear List")
@@ -267,6 +297,8 @@ class MYADDON_PT_material_panel(bpy.types.Panel):
         layout.operator(MYADDON_OT_apply_materials.bl_idname, text="Apply Materials") 
 
 
+
+################################   REGISTRATION    ###################################
 classes = [
     MYADDON_PG_MaterialEntry,
     MYADDON_PG_LookupMaterials,
